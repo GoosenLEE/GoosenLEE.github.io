@@ -3,39 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chinese Pinyin Composer</title>
+  <title>汉语拼音组合练习器（优化发音版）</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      padding: 16px;
       max-width: 900px;
       margin: 0 auto;
       background: #f9f9f9;
     }
-    h2 { margin-top: 30px; }
-    .section {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .btn {
-      padding: 6px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #f0f0f0;
-      cursor: pointer;
-    }
-    .btn.active {
-      background: #4CAF50;
-      color: white;
+    h1 {
+      text-align: center;
     }
     .result {
       font-size: 28px;
@@ -43,6 +21,46 @@
       margin: 20px 0;
       min-height: 40px;
       font-weight: bold;
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .section {
+      background: #fff;
+      padding: 14px;
+      border-radius: 8px;
+      margin: 16px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .section h2 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+    }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(16, auto);
+      gap: 4px;
+    }
+    @media (max-width: 768px) {
+      .button-grid {
+        grid-template-columns: repeat(10, auto);
+      }
+    }
+    .btn {
+      padding: 6px 10px;
+      font-size: 14px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #f0f0f0;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn:hover {
+      background: #e0e0e0;
+    }
+    .btn.active {
+      background: #4CAF50;
+      color: white;
     }
     .tone-btns {
       display: flex;
@@ -53,32 +71,34 @@
   </style>
 </head>
 <body>
-  <h1>Pinyin Composer</h1>
-  <div class="result" id="result">Please choose consonant and vowel</div>
+  <h1>汉语拼音组合练习器</h1>
+  <div class="result" id="result">请选择声母和韵母</div>
 
   <div class="section">
-    <h2>🔊 consonant</h2>
-    <div class="buttons" id="initials"></div>
+    <h2>🔊 声母（点击选择）</h2>
+    <div class="button-grid" id="initials"></div>
   </div>
 
   <div class="section">
-    <h2>🎵 vowel</h2>
-    <div class="buttons" id="finals"></div>
+    <h2>🎵 韵母（点击选择）</h2>
+    <div class="button-grid" id="finals"></div>
   </div>
 
   <div class="section">
-    <h2>🗣️ pronounciation</h2>
+    <h2>🗣️ 点击发音</h2>
     <div class="tone-btns">
-      <button class="btn" onclick="speak(1)">1-st tone</button>
-      <button class="btn" onclick="speak(2)">2-nd tone</button>
-      <button class="btn" onclick="speak(3)">3-rd tone</button>
-      <button class="btn" onclick="speak(4)">4-th tone</button>
+      <button class="btn" onclick="speak(1)">1 tone</button>
+      <button class="btn" onclick="speak(2)">2 tone</button>
+      <button class="btn" onclick="speak(3)">3 tone</button>
+      <button class="btn" onclick="speak(4)">4 tone</button>
     </div>
   </div>
 
   <script>
-    const initials = ["∅", "b", "p", "m", "f", "d", "t", "n", "l", "g", "k", "h",
+    // 声母（与你的 Python 代码一致）
+    const initials = ["", "b", "p", "m", "f", "d", "t", "n", "l", "g", "k", "h",
                       "j", "q", "x", "zh", "ch", "sh", "r", "z", "c", "s", "y", "w"];
+    // 韵母（注意：你改成了 "iu" 而不是 "iou"，已同步）
     const finals = [
       "a", "o", "e", "i", "u", "ü", "ai", "ei", "ao", "ou",
       "an", "en", "ang", "eng", "ong", "ia", "ie", "iao", "iu",
@@ -90,28 +110,27 @@
     let selectedFinal = "";
 
     function selectInitial(ini) {
-      selectedInitial = ini === "∅" ? "" : ini;
-      document.querySelectorAll("#initials .btn").forEach(btn => btn.classList.remove("active"));
+      selectedInitial = ini;
+      document.querySelectorAll("#initials .btn").forEach(b => b.classList.remove("active"));
       event.target.classList.add("active");
       updateResult();
     }
 
     function selectFinal(fin) {
       selectedFinal = fin;
-      document.querySelectorAll("#finals .btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll("#finals .btn").forEach(b => b.classList.remove("active"));
       event.target.classList.add("active");
       updateResult();
     }
 
     function updateResult() {
-      const res = document.getElementById("result");
+      const el = document.getElementById("result");
       if (selectedFinal) {
-        res.textContent = selectedInitial + selectedFinal;
+        el.textContent = selectedInitial + selectedFinal;
       } else {
-        res.textContent = "please choose consonant";
+        el.textContent = "请选择韵母";
       }
     }
-
 
     function speak(tone) {
       if (!selectedFinal) return;
@@ -119,32 +138,49 @@
 
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
+        // 尝试选择中文语音（最接近 pyttsx3 的 Huihui）
+        const voices = speechSynthesis.getVoices();
+        let zhVoice = voices.find(v => v.lang.startsWith('zh') || v.name.includes('Ting-Ting') || v.name.includes('Google 普通话'));
+        if (!zhVoice) {
+          zhVoice = voices.find(v => v.lang === 'zh-CN');
+        }
+        if (zhVoice) {
+          utterance.voice = zhVoice;
+        }
         utterance.lang = 'zh-CN';
-        utterance.rate = 0.7;
+        utterance.rate = 0.85;   // 比默认稍慢，更清晰（pyttsx3 rate=180 ≈ 此处 0.8~0.9）
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
         speechSynthesis.speak(utterance);
       } else {
-        alert("您的浏览器不支持语音朗读功能，请使用 Chrome 或 Edge。");
+        alert("您的浏览器不支持语音合成，请使用 Chrome 或 Edge。");
       }
     }
 
-    // 初始化按钮
-    const iniContainer = document.getElementById("initials");
-    initials.forEach(ini => {
-      const btn = document.createElement("button");
-      btn.className = "btn";
-      btn.textContent = ini;
-      btn.onclick = () => selectInitial(ini);
-      iniContainer.appendChild(btn);
-    });
+    // 初始化按钮（网格布局）
+    function initButtons(containerId, items, onSelect) {
+      const container = document.getElementById(containerId);
+      items.forEach(item => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = item === "" ? "∅" : item;
+        btn.onclick = () => onSelect(item);
+        container.appendChild(btn);
+      });
+    }
 
-    const finContainer = document.getElementById("finals");
-    finals.forEach(fin => {
-      const btn = document.createElement("button");
-      btn.className = "btn";
-      btn.textContent = fin;
-      btn.onclick = () => selectFinal(fin);
-      finContainer.appendChild(btn);
-    });
+    // 等待语音列表加载（关键！）
+    if ('speechSynthesis' in window) {
+      speechSynthesis.addEventListener('voiceschanged', () => {
+        initButtons("initials", initials, selectInitial);
+        initButtons("finals", finals, selectFinal);
+      });
+      // 触发一次 voices 加载
+      speechSynthesis.getVoices();
+    } else {
+      initButtons("initials", initials, selectInitial);
+      initButtons("finals", finals, selectFinal);
+    }
   </script>
 </body>
 </html>
